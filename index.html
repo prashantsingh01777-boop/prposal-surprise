@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Question For You ❤️</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            text-align: center;
+            transition: background 0.8s ease;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 35px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 350px;
+            width: 85%;
+            position: relative;
+            z-index: 10;
+        }
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #d6004c;
+            border: 2px solid #ff2e63;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 20;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .emoji-icon {
+            font-size: 70px;
+            animation: pulse 1.5s infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        h1 {
+            color: #d6004c;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        p {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            height: 45px;
+        }
+        button {
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .yes-btn {
+            background-color: #ff2e63;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 46, 99, 0.4);
+        }
+        .yes-btn:hover {
+            transform: scale(1.1);
+        }
+        .no-btn {
+            background-color: #e0e0e0;
+            color: #333;
+            position: relative;
+        }
+        .hidden {
+            display: none;
+        }
+        .heart {
+            position: fixed;
+            bottom: -20px;
+            font-size: 20px;
+            animation: floatUp 4s linear infinite;
+            z-index: 1;
+            opacity: 0.8;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 0.9; }
+            100% { transform: translateY(-105vh) scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- म्यूजिक कंट्रोल बटन -->
+    <button class="music-btn" id="musicBtn" onclick="toggleMusic()">⏸️ Pause Song</button>
+
+    <!-- यहाँ अपना गाना जोड़ें: अपनी MP3 फाइल का नाम "song.mp3" रखकर इसी फोल्डर में डाल दें -->
+    <audio id="bgMusic" src="song.mp3" loop></audio>
+
+    <!-- स्टेप 1: पहला सवाल -->
+    <div class="card" id="step1Card">
+        <div class="emoji-icon">🥺❤️</div>
+        <h1>Do you love me?</h1>
+        <p>सच-सच बताना... दिल से! 💕</p>
+        <div class="btn-group">
+            <button class="yes-btn" onclick="goToStep2()">Yes! ❤️</button>
+            <button class="no-btn" id="noBtn1" onmouseover="moveButton('noBtn1')" ontouchstart="moveButton('noBtn1')">No 🙈</button>
+        </div>
+    </div>
+
+    <!-- स्टेप 2: मुख्य प्रपोजल -->
+    <div class="card hidden" id="step2Card">
+        <div class="emoji-icon" id="emoji2">🌹</div>
+        <h1 id="title2">I Knew It! ❤️</h1>
+        <p id="message2">
+            "तुझे कितना चाहने लगे हम..." 💖<br>
+            तुम्हारी मुस्कान से मेरा हर दिन खास बन जाता है।<br>
+            <b>Will you be mine forever? 💍</b>
+        </p>
+        <div class="btn-group" id="btnGroup2">
+            <button class="yes-btn" onclick="acceptFinalProposal()">Yes, Forever! ❤️</button>
+            <button class="no-btn" id="noBtn2" onmouseover="moveButton('noBtn2')" ontouchstart="moveButton('noBtn2')">No 🙈</button>
+        </div>
+    </div>
+
+    <script>
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+
+        // पहले "Yes!" पर क्लिक करते ही आपका गाना शुरू हो जाएगा
+        function goToStep2() {
+            music.play().then(() => {
+                isPlaying = true;
+                musicBtn.style.display = 'block';
+                musicBtn.innerText = "⏸️ Pause Song";
+            }).catch(() => {
+                musicBtn.style.display = 'block';
+                musicBtn.innerText = "🎵 Play Song";
+            });
+
+            document.getElementById('step1Card').classList.add('hidden');
+            document.getElementById('step2Card').classList.remove('hidden');
+            setInterval(createHeart, 600);
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                musicBtn.innerText = "🎵 Play Song";
+                isPlaying = false;
+            } else {
+                music.play();
+                musicBtn.innerText = "⏸️ Pause Song";
+                isPlaying = true;
+            }
+        }
+
+        function moveButton(btnId) {
+            const btn = document.getElementById(btnId);
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth - 40);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight - 40);
+            
+            btn.style.position = 'fixed';
+            btn.style.left = Math.max(20, x) + 'px';
+            btn.style.top = Math.max(20, y) + 'px';
+        }
+
+        function acceptFinalProposal() {
+            document.getElementById('emoji2').innerText = '🥰💍✨';
+            document.getElementById('title2').innerText = 'Yay!! I Love You So Much! ❤️';
+            document.getElementById('message2').innerHTML = 'तुमने मुझे दुनिया का सबसे खुश इंसान बना दिया!<br>Can’t wait for our forever together. 🌹';
+            document.getElementById('btnGroup2').style.display = 'none';
+            document.body.style.background = 'linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%)';
+            
+            setInterval(createHeart, 250);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerText = ['❤️', '💖', '🌹', '💕'][Math.floor(Math.random() * 4)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+    </script>
+
+</body>
+</html>
